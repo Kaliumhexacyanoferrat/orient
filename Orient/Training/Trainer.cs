@@ -48,6 +48,7 @@ namespace Training
 
             var probAfter = network.Forward(volume);
             Console.WriteLine(probAfter.Get(9));
+
         }
 
     }
