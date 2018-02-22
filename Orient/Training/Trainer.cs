@@ -27,12 +27,13 @@ namespace Training
             var volume = BuilderInstance.Volume.Build(input.Storage, input.Shape);
 
             var network = FluentNet<double>.Create(256, 256, 1)
-                .Conv(32, 32, 8).Stride(1).Pad(2)
+                .Conv(32, 32, 64).Stride(4) //.Pad(2) // neurons: 256x256 / 32x32 ? 
                 .Relu()
-                .Pool(8, 8).Stride(2)
-                .Conv(4, 4, 16).Stride(1).Pad(2)
+                .Pool(16, 16).Stride(8) 
+                .Conv(32, 32, 96).Stride(4) // .Pad(2)
                 .Relu()
-                .Pool(2, 2).Stride(3)
+                .Pool(20, 20).Stride(8)
+                .FullyConn(512)
                 .FullyConn(11)
                 .Softmax(11)
                 .Build();
