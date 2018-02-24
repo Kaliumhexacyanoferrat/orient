@@ -13,7 +13,9 @@ namespace CommandLine
 
         static void Main(string[] args)
         {
-            new TrainingData().Generate(@"D:\Temp\Training\Source", @"D:\Temp\Training\Input");
+            // new TrainingData().Generate(@"D:\Temp\Training\Source", @"D:\Temp\Training\Input");
+
+            // new TrainingData().Generate(@"D:\Temp\Test\Source", @"D:\Temp\Test\Input");
 
             new Trainer().Run();
         }

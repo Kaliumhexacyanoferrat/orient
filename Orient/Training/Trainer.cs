@@ -13,6 +13,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using ConvNetSharp.Core.Fluent;
+using ConvNetSharp.Core.Training;
 
 namespace Training
 {
@@ -22,33 +23,58 @@ namespace Training
 
         public void Run()
         {
-            var input = Input.FromFile(@"D:\Temp\Training\Input\5\IMG_1272.JPG");
+            Console.WriteLine("Loading model ...");
 
-            var volume = BuilderInstance.Volume.Build(input.Storage, input.Shape);
+            var network = Network.FromFile("default.json");
 
-            var network = FluentNet<double>.Create(256, 256, 1)
-                .Conv(32, 32, 64).Stride(4) //.Pad(2) // neurons: 256x256 / 32x32 ? 
-                .Relu()
-                .Pool(16, 16).Stride(8) 
-                .Conv(32, 32, 96).Stride(4) // .Pad(2)
-                .Relu()
-                .Pool(20, 20).Stride(8)
-                .FullyConn(512)
-                .FullyConn(11)
-                .Softmax(11)
-                .Build();
+            var batchSize = 20;
+            var testSize = 10;
+            var saveInterval = 25;
 
-            var probBefore = network.Forward(volume);
-            Console.WriteLine(probBefore.Get(9));
+            var trainer = new SgdTrainer<double>(network.Net)
+            {
+                LearningRate = 0.01,
+                BatchSize = batchSize,
+                L2Decay = 0.001,
+                Momentum = 0.7
+            };
 
-            var temp = new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0  };
+            var trainingData = TrainingSet.FromDirectory(@"D:\Temp\Training\Input", batchSize);
+            var testData = TrainingSet.FromDirectory(@"D:\Temp\Test\Input", testSize);
 
-            var trainer = new SgdTrainer(network) { LearningRate = 0.01, L2Decay = 0.001 };
-            trainer.Train(volume, BuilderInstance.Volume.From(temp, new Shape(1, 1, 11, 1)));
+            Console.WriteLine("Training ...");
 
-            var probAfter = network.Forward(volume);
-            Console.WriteLine(probAfter.Get(9));
+            var run = 0;
 
+            do
+            {
+                if (++run % saveInterval == 0)
+                {
+                    Console.WriteLine("Saving model ...");
+                    network.Save("default.json");
+                }
+
+                // train
+                using (var batch = trainingData.GetBatch())
+                {
+                    trainer.Train(batch.InputVolume, batch.OutputVolume);
+                }
+
+                // and test
+                using (var testBatch = testData.GetBatch())
+                {
+                    var result = network.Net.Forward(testBatch.InputVolume);
+
+                    testBatch.SetResult(result);
+
+                    // evaluate results
+                    Console.WriteLine($"Epoch #{trainingData.Epoch} - Run #{run} - Avg: {testBatch.AverageError:0.00}, Min: {testBatch.MinimumError:0.00}, Max: {testBatch.MaximumError:0.00}, Loss: {trainer.Loss}");
+                }
+            }
+            while (!Console.KeyAvailable);
+
+            Console.WriteLine("Saving model ...");
+            network.Save("default.json");
         }
 
     }

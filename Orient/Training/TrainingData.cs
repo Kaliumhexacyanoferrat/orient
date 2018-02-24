@@ -14,14 +14,19 @@ namespace Training
     {
         
         public void Generate(string sourceDirectory, string targetDictory)
-        {
-            var converter = new Converter();
+        {           
+            var options = new ParallelOptions()
+            {
+                MaxDegreeOfParallelism = 11
+            };
 
             foreach (var sourceFile in Directory.EnumerateFiles(sourceDirectory))
             {
+                var converter = new Converter();
+
                 using (var sourceImage = (Bitmap)Bitmap.FromFile(sourceFile))
                 {
-                    foreach (var angle in new int[] { -10, -5, -3, -2, -1, 1, 2, 3, 5, 10 })
+                    foreach (var angle in new int[] { -10, -5, -3, -2, -1, 0, 1, 2, 3, 5, 10 })
                     {
                         var targetFile = new FileInfo(Path.Combine(targetDictory, angle.ToString(), Path.GetFileName(sourceFile)));
 
@@ -40,9 +45,9 @@ namespace Training
                                 }
                             }
                         }
-                    }
+                    };
                 }
-            }
+            };
         }
 
         private Bitmap RotateImage(Bitmap source, int angle)

@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Converter.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Network.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
