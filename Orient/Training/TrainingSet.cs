@@ -42,7 +42,7 @@ namespace Training
 
         public TrainingBatch GetBatch()
         {
-            var inputShape = new Shape(256, 256, 1, BatchSize);
+            var inputShape = new Shape(256, 256, 3, BatchSize);
             var inputData = new double[inputShape.TotalLength];
 
             var outputShape = new Shape(1, 1, 1, BatchSize);
@@ -64,8 +64,10 @@ namespace Training
 
                 if (++_Current >= _TrainingObjects.Count)
                 {
+                    _TrainingObjects.Shuffle();
                     _Current = 0;
-                    Epoch++;
+
+                    Epoch++;                
                 }
             }
 

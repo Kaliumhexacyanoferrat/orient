@@ -28,7 +28,7 @@ namespace Engine
         {
             get
             {
-                var shape = new Shape(256, 256);
+                var shape = new Shape(256, 256, 3);
                 var data = new double[shape.TotalLength];
 
                 var volume = BuilderInstance.Volume.From(data, shape);            
@@ -45,6 +45,8 @@ namespace Engine
                 for (int x = 0; x < Image.Width; x++)
                 {
                     volume.Set(x, y, 0, index, Image.GetPixel(x, y).R / 255.0);
+                    volume.Set(x, y, 1, index, Image.GetPixel(x, y).G / 255.0);
+                    volume.Set(x, y, 2, index, Image.GetPixel(x, y).B / 255.0);
                 }
             }
         }

@@ -18,28 +18,31 @@ namespace Training
 
         public double AverageError { get; set; }
 
-        public double MinimumError { get; set; }
+        public double MinimumAngle { get; set; }
 
-        public double MaximumError { get; set; }
+        public double MaximumAngle { get; set; }
         
         public void SetResult(Volume<double> output)
         {
             var errors = new List<double>();
-
+            var angles = new List<double>();
+            
             for (int i = 0; i < output.Shape.TotalLength; i++)
             {
                 var expected = OutputVolume.Get(i);
                 var actual = output.Get(i);
 
-                errors.Add(Math.Abs(expected - actual)); 
+                errors.Add(Math.Abs(Math.Abs(expected) - Math.Abs(actual)));
+
+                angles.Add(actual);
             }
-
+            
             AverageError = errors.Average();
-            MinimumError = errors.Min();
-            MaximumError = errors.Max();
+
+            MinimumAngle = angles.Min();
+            MaximumAngle = angles.Max();
         }
-
-
+    
         public void Dispose()
         {
             InputVolume?.Dispose();

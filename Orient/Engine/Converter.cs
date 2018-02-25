@@ -15,10 +15,7 @@ namespace Engine
 
         public Input GetInput(Bitmap source)
         {
-            using (var resized = ResizeImage(source, 256, 256))
-            {
-                return new Input() { Image = MakeGrayscale(resized) };
-            }
+            return new Input() { Image = ResizeImage(source, 256, 256) };
         }
 
         private Bitmap MakeGrayscale(Bitmap original)

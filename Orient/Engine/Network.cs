@@ -20,19 +20,29 @@ namespace Engine
         {
             var net = new Net<double>();
 
-            net.AddLayer(new InputLayer(256, 256, 1));
+            net.AddLayer(new InputLayer(256, 256, 3));
 
             // ToDo: Pad ConvLayers?
 
-            net.AddLayer(new ConvLayer(32, 32, 64) { Stride = 24 }); //  256x256 / 32x32 = 64 Neurons
+            net.AddLayer(new ConvLayer(32, 32, 64) { Stride = 24 });
             net.AddLayer(new ReluLayer());
-            net.AddLayer(new PoolLayer(16, 16) { Stride = 12 });
-
-            net.AddLayer(new ConvLayer(32, 32, 96) { Stride = 24 });
+            net.AddLayer(new PoolLayer(10, 10) { Stride = 10 });
+            
+            net.AddLayer(new FullyConnLayer(256));
             net.AddLayer(new ReluLayer());
-            net.AddLayer(new PoolLayer(20, 20) { Stride = 14 });
 
-            net.AddLayer(new FullyConnLayer(512));
+            net.AddLayer(new FullyConnLayer(64));
+            //net.AddLayer(new ReluLayer());
+
+            /*net.AddLayer(new FullyConnLayer(256));
+            net.AddLayer(new ReluLayer());        
+
+            net.AddLayer(new FullyConnLayer(256));
+            net.AddLayer(new ReluLayer());*/
+
+            /*net.AddLayer(new FullyConnLayer(8));
+            net.AddLayer(new ReluLayer());*/
+
             net.AddLayer(new FullyConnLayer(1));
 
             net.AddLayer(new RegressionLayer());

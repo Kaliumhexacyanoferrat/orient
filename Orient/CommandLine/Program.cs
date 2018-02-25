@@ -13,11 +13,16 @@ namespace CommandLine
 
         static void Main(string[] args)
         {
-            // new TrainingData().Generate(@"D:\Temp\Training\Source", @"D:\Temp\Training\Input");
+            var trainingSet = @"D:\Temp\Training";
+            var testSet = @"D:\Temp\Test";
 
-            // new TrainingData().Generate(@"D:\Temp\Test\Source", @"D:\Temp\Test\Input");
+            Console.WriteLine("Generating training data ...");
 
-            new Trainer().Run();
+            new TrainingData().Generate(trainingSet);
+
+            new TrainingData().Generate(testSet);
+
+            new Trainer().Run("default.json", trainingSet, testSet);
         }
 
     }

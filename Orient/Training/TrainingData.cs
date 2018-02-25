@@ -13,12 +13,26 @@ namespace Training
     public class TrainingData
     {
         
-        public void Generate(string sourceDirectory, string targetDictory)
-        {           
+        public void Generate(string sourceDirectory)
+        {
+            var targetDictory = Path.Combine(sourceDirectory, "rotated");
+
+            if (Directory.Exists(targetDictory))
+            {
+                Directory.CreateDirectory(targetDictory);
+            }
+
             var options = new ParallelOptions()
             {
                 MaxDegreeOfParallelism = 11
             };
+
+            var angles = new List<int>();
+
+            for (int i = -12; i < 13; i++)
+            {
+                angles.Add(i);
+            }
 
             foreach (var sourceFile in Directory.EnumerateFiles(sourceDirectory))
             {
@@ -26,9 +40,14 @@ namespace Training
 
                 using (var sourceImage = (Bitmap)Bitmap.FromFile(sourceFile))
                 {
-                    foreach (var angle in new int[] { -10, -5, -3, -2, -1, 0, 1, 2, 3, 5, 10 })
+                    foreach (var angle in angles)
                     {
                         var targetFile = new FileInfo(Path.Combine(targetDictory, angle.ToString(), Path.GetFileName(sourceFile)));
+
+                        if (targetFile.Exists)
+                        {
+                            continue;
+                        }
 
                         if (!targetFile.Directory.Exists)
                         {

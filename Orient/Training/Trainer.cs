@@ -21,28 +21,33 @@ namespace Training
     public class Trainer
     {
 
-        public void Run()
+        public void Run(string model, string trainingSet, string testSet)
         {
             Console.WriteLine("Loading model ...");
+            
+            var network = (File.Exists(model)) ? Network.FromFile(model) : Network.CreateNew();
 
-            var network = Network.FromFile("default.json");
+            var batchSize = 30;
 
-            var batchSize = 20;
+            var testInterval = 1;
             var testSize = 10;
-            var saveInterval = 25;
+
+            var saveInterval = 100;
 
             var trainer = new SgdTrainer<double>(network.Net)
             {
-                LearningRate = 0.01,
+                LearningRate = 0.0025,
                 BatchSize = batchSize,
                 L2Decay = 0.001,
-                Momentum = 0.7
+                Momentum = 0.5
             };
 
-            var trainingData = TrainingSet.FromDirectory(@"D:\Temp\Training\Input", batchSize);
-            var testData = TrainingSet.FromDirectory(@"D:\Temp\Test\Input", testSize);
+            var trainingData = TrainingSet.FromDirectory(Path.Combine(trainingSet, "rotated"), batchSize);
+            var testData = TrainingSet.FromDirectory(Path.Combine(testSet, "rotated"), testSize);
 
             Console.WriteLine("Training ...");
+
+            WriteHeader();
 
             var run = 0;
 
@@ -50,8 +55,7 @@ namespace Training
             {
                 if (++run % saveInterval == 0)
                 {
-                    Console.WriteLine("Saving model ...");
-                    network.Save("default.json");
+                    Save(network, model);
                 }
 
                 // train
@@ -60,21 +64,38 @@ namespace Training
                     trainer.Train(batch.InputVolume, batch.OutputVolume);
                 }
 
-                // and test
-                using (var testBatch = testData.GetBatch())
+                if (run % testInterval == 0)
                 {
-                    var result = network.Net.Forward(testBatch.InputVolume);
+                    using (var testBatch = testData.GetBatch())
+                    {
+                        // and test
+                        var result = network.Net.Forward(testBatch.InputVolume);
 
-                    testBatch.SetResult(result);
+                        testBatch.SetResult(result);
 
-                    // evaluate results
-                    Console.WriteLine($"Epoch #{trainingData.Epoch} - Run #{run} - Avg: {testBatch.AverageError:0.00}, Min: {testBatch.MinimumError:0.00}, Max: {testBatch.MaximumError:0.00}, Loss: {trainer.Loss}");
+                        // evaluate results
+                        Console.WriteLine($"{trainingData.Epoch}\t{run}\t{testBatch.AverageError:0.00}\t{testBatch.MinimumAngle:0.00}\t{testBatch.MaximumAngle:0.00}\t{trainer.Loss:0.00000}");
+                    }
                 }
             }
             while (!Console.KeyAvailable);
 
+            Save(network, model);
+        }
+
+        private void WriteHeader()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("Epoch #\tRun #\tErr\tMin\tMax\tLoss");
+            Console.WriteLine("");
+        }
+
+        private void Save(Network network, string modelFile)
+        {
             Console.WriteLine("Saving model ...");
-            network.Save("default.json");
+            network.Save(modelFile);
+
+            WriteHeader();
         }
 
     }
