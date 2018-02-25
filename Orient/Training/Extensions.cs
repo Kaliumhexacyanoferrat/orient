@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Training
+namespace Orient.Training
 {
 
     public static class Extensions

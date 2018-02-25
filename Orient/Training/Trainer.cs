@@ -4,7 +4,7 @@ using ConvNetSharp.Volume.Double;
 using ConvNetSharp.Core.Layers.Double;
 using ConvNetSharp.Core.Training.Double;
 using ConvNetSharp.Volume;
-using Engine;
+using Orient.Engine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,20 +14,22 @@ using System.IO;
 using System.Text;
 using ConvNetSharp.Core.Fluent;
 using ConvNetSharp.Core.Training;
+using NLog;
 
-namespace Training
+namespace Orient.Training
 {
 
-    public class Trainer
+    public class NetworkTrainer
     {
+        private Logger Log = LogManager.GetLogger("Trainer");
 
         public void Run(string model, string trainingSet, string testSet)
         {
-            Console.WriteLine("Loading model ...");
+            Log.Info("Loading model ...");
             
             var network = (File.Exists(model)) ? Network.FromFile(model) : Network.CreateNew();
 
-            var batchSize = 30;
+            var batchSize = 10;
 
             var testInterval = 1;
             var testSize = 10;
@@ -36,16 +38,16 @@ namespace Training
 
             var trainer = new SgdTrainer<double>(network.Net)
             {
-                LearningRate = 0.0025,
+                LearningRate = 0.001,
                 BatchSize = batchSize,
-                L2Decay = 0.001,
+                // L2Decay = 0.001,
                 Momentum = 0.5
             };
 
             var trainingData = TrainingSet.FromDirectory(Path.Combine(trainingSet, "rotated"), batchSize);
             var testData = TrainingSet.FromDirectory(Path.Combine(testSet, "rotated"), testSize);
 
-            Console.WriteLine("Training ...");
+            Log.Info("Training ...");
 
             WriteHeader();
 
@@ -74,7 +76,7 @@ namespace Training
                         testBatch.SetResult(result);
 
                         // evaluate results
-                        Console.WriteLine($"{trainingData.Epoch}\t{run}\t{testBatch.AverageError:0.00}\t{testBatch.MinimumAngle:0.00}\t{testBatch.MaximumAngle:0.00}\t{trainer.Loss:0.00000}");
+                        Log.Info($"{trainingData.Epoch}\t{run}\t{testBatch.TotalError:0.00}\t{testBatch.MinimumAngle:0.00}\t{testBatch.MaximumAngle:0.00}\t{trainer.Loss:0.00000}");
                     }
                 }
             }
@@ -85,14 +87,14 @@ namespace Training
 
         private void WriteHeader()
         {
-            Console.WriteLine("");
-            Console.WriteLine("Epoch #\tRun #\tErr\tMin\tMax\tLoss");
-            Console.WriteLine("");
+            Log.Info("");
+            Log.Info("Epoch #\tRun #\tErr\tMin\tMax\tLoss");
+            Log.Info("");
         }
 
         private void Save(Network network, string modelFile)
         {
-            Console.WriteLine("Saving model ...");
+            Log.Info("Saving model ...");
             network.Save(modelFile);
 
             WriteHeader();

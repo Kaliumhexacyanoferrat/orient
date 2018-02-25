@@ -1,12 +1,12 @@
 ﻿using ConvNetSharp.Volume;
-using Engine;
+using Orient.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Training
+namespace Orient.Training
 {
 
     public class TrainingBatch : IDisposable
@@ -16,7 +16,7 @@ namespace Training
 
         public Volume<double> OutputVolume { get; set; }
 
-        public double AverageError { get; set; }
+        public double TotalError { get; set; }
 
         public double MinimumAngle { get; set; }
 
@@ -36,8 +36,8 @@ namespace Training
 
                 angles.Add(actual);
             }
-            
-            AverageError = errors.Average();
+
+            TotalError = errors.Sum();
 
             MinimumAngle = angles.Min();
             MaximumAngle = angles.Max();

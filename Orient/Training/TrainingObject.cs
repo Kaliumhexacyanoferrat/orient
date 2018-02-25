@@ -1,11 +1,11 @@
-﻿using Engine;
+﻿using Orient.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Training
+namespace Orient.Training
 {
 
     public class TrainingObject

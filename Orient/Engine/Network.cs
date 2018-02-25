@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine
+namespace Orient.Engine
 {
 
     public class Network
@@ -24,24 +24,12 @@ namespace Engine
 
             // ToDo: Pad ConvLayers?
 
-            net.AddLayer(new ConvLayer(32, 32, 64) { Stride = 24 });
+            net.AddLayer(new ConvLayer(32, 32, 192) { Stride = 24, Pad = 4 });
             net.AddLayer(new ReluLayer());
             net.AddLayer(new PoolLayer(10, 10) { Stride = 10 });
             
-            net.AddLayer(new FullyConnLayer(256));
+            net.AddLayer(new FullyConnLayer(768));
             net.AddLayer(new ReluLayer());
-
-            net.AddLayer(new FullyConnLayer(64));
-            //net.AddLayer(new ReluLayer());
-
-            /*net.AddLayer(new FullyConnLayer(256));
-            net.AddLayer(new ReluLayer());        
-
-            net.AddLayer(new FullyConnLayer(256));
-            net.AddLayer(new ReluLayer());*/
-
-            /*net.AddLayer(new FullyConnLayer(8));
-            net.AddLayer(new ReluLayer());*/
 
             net.AddLayer(new FullyConnLayer(1));
 

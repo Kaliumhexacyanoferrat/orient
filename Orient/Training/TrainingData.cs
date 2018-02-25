@@ -1,4 +1,5 @@
-﻿using Engine;
+﻿using NLog;
+using Orient.Engine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Training
+namespace Orient.Training
 {
 
     public class TrainingData
