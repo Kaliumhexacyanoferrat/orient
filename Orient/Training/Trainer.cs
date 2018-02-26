@@ -28,11 +28,11 @@ namespace Orient.Training
             var testInterval = 1;
             var testSize = 10;
 
-            var saveInterval = 100;
+            var saveInterval = 25;
 
             var trainer = new SgdTrainer<double>(network.Net)
             {
-                LearningRate = 0.002,
+                LearningRate = 0.007,
                 BatchSize = batchSize,
                 // L2Decay = 0.001,
                 Momentum = 0.6
