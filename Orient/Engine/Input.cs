@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using ConvNetSharp.Volume.Double;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConvNetSharp.Flow.Ops;
 using ConvNetSharp.Volume;
+
+#if GPU
+using ConvNetSharp.Volume.GPU.Double;
+#else
+using ConvNetSharp.Volume.Double;
+#endif
 
 namespace Orient.Engine
 {

@@ -1,18 +1,7 @@
-﻿using ConvNetSharp.Core;
-using ConvNetSharp.Core.Layers;
-using ConvNetSharp.Volume.Double;
-using ConvNetSharp.Core.Layers.Double;
-using ConvNetSharp.Core.Training.Double;
-using ConvNetSharp.Volume;
+﻿using ConvNetSharp.Volume;
 using Orient.Engine;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
-using ConvNetSharp.Core.Fluent;
 using ConvNetSharp.Core.Training;
 using NLog;
 
@@ -25,11 +14,16 @@ namespace Orient.Training
 
         public void Run(string model, string trainingSet, string testSet)
         {
+#if GPU
+            Log.Info("Enabling GPU mode ...");
+            BuilderInstance<double>.Volume = new ConvNetSharp.Volume.GPU.Double.VolumeBuilder();
+#endif
+
             Log.Info("Loading model ...");
             
             var network = (File.Exists(model)) ? Network.FromFile(model) : Network.CreateNew();
 
-            var batchSize = 10;
+            var batchSize = 15;
 
             var testInterval = 1;
             var testSize = 10;
@@ -38,10 +32,10 @@ namespace Orient.Training
 
             var trainer = new SgdTrainer<double>(network.Net)
             {
-                LearningRate = 0.001,
+                LearningRate = 0.002,
                 BatchSize = batchSize,
                 // L2Decay = 0.001,
-                Momentum = 0.5
+                Momentum = 0.6
             };
 
             var trainingData = TrainingSet.FromDirectory(Path.Combine(trainingSet, "rotated"), batchSize);

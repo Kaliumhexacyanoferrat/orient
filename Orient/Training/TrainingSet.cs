@@ -1,11 +1,16 @@
 ﻿using ConvNetSharp.Volume;
-using ConvNetSharp.Volume.Double;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+#if GPU
+using ConvNetSharp.Volume.GPU.Double;
+#else
+using ConvNetSharp.Volume.Double;
+#endif
 
 namespace Orient.Training
 {

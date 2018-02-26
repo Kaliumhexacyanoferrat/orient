@@ -28,7 +28,13 @@ namespace Orient.Engine
             net.AddLayer(new ReluLayer());
             net.AddLayer(new PoolLayer(10, 10) { Stride = 10 });
             
-            net.AddLayer(new FullyConnLayer(768));
+            net.AddLayer(new FullyConnLayer(4096));
+            net.AddLayer(new ReluLayer());
+
+            net.AddLayer(new FullyConnLayer(4096));
+            net.AddLayer(new ReluLayer());
+
+            net.AddLayer(new FullyConnLayer(128));
             net.AddLayer(new ReluLayer());
 
             net.AddLayer(new FullyConnLayer(1));
