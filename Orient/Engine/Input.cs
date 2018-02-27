@@ -49,9 +49,11 @@ namespace Orient.Engine
             {
                 for (int x = 0; x < Image.Width; x++)
                 {
-                    volume.Set(x, y, 0, index, Image.GetPixel(x, y).R / 255.0);
-                    volume.Set(x, y, 1, index, Image.GetPixel(x, y).G / 255.0);
-                    volume.Set(x, y, 2, index, Image.GetPixel(x, y).B / 255.0);
+                    var color = Image.GetPixel(x, y);
+
+                    volume.Set(y, x, 0, index, Normalize(color.GetBrightness()));
+                    volume.Set(y, x, 1, index, Normalize(color.GetHue() / 360.0));
+                    volume.Set(y, x, 2, index, Normalize(color.GetSaturation()));
                 }
             }
         }
@@ -59,6 +61,11 @@ namespace Orient.Engine
         public void Dispose()
         {
             Image.Dispose();       
+        }
+
+        private double Normalize(double input)
+        {
+            return (input * 2.0) - 1;
         }
 
     }

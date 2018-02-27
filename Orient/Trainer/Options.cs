@@ -20,7 +20,7 @@ namespace Orient.Trainer
         [Option(Default = @"D:\Temp\Test")]
         public string TestSet { get; set; }
 
-        [Option(Default = false)]
+        [Option(Default = true)]
         public bool SkipGeneration { get; set; }
         
     }

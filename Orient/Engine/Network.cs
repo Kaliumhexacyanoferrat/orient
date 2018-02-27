@@ -24,18 +24,11 @@ namespace Orient.Engine
 
             // ToDo: Pad ConvLayers?
 
-            net.AddLayer(new ConvLayer(32, 32, 192) { Stride = 24, Pad = 4 });
+            net.AddLayer(new ConvLayer(16, 16, 192) { Stride = 12 });
             net.AddLayer(new ReluLayer());
-            net.AddLayer(new PoolLayer(10, 10) { Stride = 10 });
+            net.AddLayer(new PoolLayer(6, 6) { Stride = 6 });
             
-            net.AddLayer(new FullyConnLayer(4096));
-            net.AddLayer(new ReluLayer());
-
-            net.AddLayer(new FullyConnLayer(4096));
-            net.AddLayer(new ReluLayer());
-
-            net.AddLayer(new FullyConnLayer(128));
-            net.AddLayer(new ReluLayer());
+            net.AddLayer(new FullyConnLayer(512));
 
             net.AddLayer(new FullyConnLayer(1));
 

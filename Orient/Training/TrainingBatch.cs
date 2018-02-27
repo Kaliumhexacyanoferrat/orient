@@ -18,6 +18,8 @@ namespace Orient.Training
 
         public double TotalError { get; set; }
 
+        public double MaxError { get; set; }
+
         public double MinimumAngle { get; set; }
 
         public double MaximumAngle { get; set; }
@@ -32,12 +34,13 @@ namespace Orient.Training
                 var expected = OutputVolume.Get(i);
                 var actual = output.Get(i);
 
-                errors.Add(Math.Abs(Math.Abs(expected) - Math.Abs(actual)));
+                errors.Add(Math.Abs(expected - actual));
 
                 angles.Add(actual);
             }
 
             TotalError = errors.Sum();
+            MaxError = errors.Max();
 
             MinimumAngle = angles.Min();
             MaximumAngle = angles.Max();

@@ -20,23 +20,29 @@ namespace Orient.Training
 #endif
 
             Log.Info("Loading model ...");
-            
+
             var network = (File.Exists(model)) ? Network.FromFile(model) : Network.CreateNew();
 
             var batchSize = 15;
 
-            var testInterval = 1;
+            var testInterval = 10;
             var testSize = 10;
 
-            var saveInterval = 25;
+            var saveInterval = 50;
 
-            var trainer = new SgdTrainer<double>(network.Net)
+            var trainer = new AdamTrainer<double>(network.Net)
             {
-                LearningRate = 0.007,
-                BatchSize = batchSize,
-                // L2Decay = 0.001,
-                Momentum = 0.6
+                LearningRate = 0.001,
+                Beta1 = 0.9,
+                Beta2 = 0.999
             };
+            /*new SgdTrainer<double>(network.Net)
+            {
+                LearningRate = 0.008,
+                BatchSize = batchSize,
+                L2Decay = 0.001,
+                Momentum = 0.8
+            };*/
 
             var trainingData = TrainingSet.FromDirectory(Path.Combine(trainingSet, "rotated"), batchSize);
             var testData = TrainingSet.FromDirectory(Path.Combine(testSet, "rotated"), testSize);
@@ -70,7 +76,7 @@ namespace Orient.Training
                         testBatch.SetResult(result);
 
                         // evaluate results
-                        Log.Info($"{trainingData.Epoch}\t{run}\t{testBatch.TotalError:0.00}\t{testBatch.MinimumAngle:0.00}\t{testBatch.MaximumAngle:0.00}\t{trainer.Loss:0.00000}");
+                        Log.Info($"{trainingData.Epoch}\t\t{run}\t{testBatch.TotalError:0.00}\t{testBatch.MinimumAngle:0.00}\t{testBatch.MaximumAngle:0.00}\t{testBatch.MaxError:0.00}\t{trainer.Loss:0.00000}");
                     }
                 }
             }
@@ -82,7 +88,7 @@ namespace Orient.Training
         private void WriteHeader()
         {
             Log.Info("");
-            Log.Info("Epoch #\tRun #\tErr\tMin\tMax\tLoss");
+            Log.Info("Epoch #\tRun #\tErr\tMin\tMax\tMaxErr\tLoss");
             Log.Info("");
         }
 
